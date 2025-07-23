@@ -1,5 +1,5 @@
 <?php
-require_once '../../config/db.php';
+require_once '../config/db.php';
 
 class AuthModel {
     private $conn;
@@ -10,7 +10,18 @@ class AuthModel {
 
     public function register($nombre, $email, $password) {
         if (!$nombre || !$email || !$password) {
-            return ['status' => 'error', 'message' => 'Faltan datos'];
+            return ['status' => false, 'msg' => 'Faltan datos'];
+        }
+
+        // Verificar si el email ya existe
+        $checkQuery = "SELECT COUNT(*) FROM users WHERE email = :email";
+        $checkStmt = $this->conn->prepare($checkQuery);
+        $checkStmt->bindParam(':email', $email);
+        $checkStmt->execute();
+        $exists = $checkStmt->fetchColumn();
+
+        if ($exists > 0) {
+            return ['status' => false, 'msg' => 'El correo ya está registrado'];
         }
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -24,15 +35,15 @@ class AuthModel {
 
         try {
             $stmt->execute();
-            return ['status' => 'ok', 'message' => 'Usuario registrado con éxito'];
+            return ['status' => true, 'msg' => 'Usuario registrado con éxito'];
         } catch (PDOException $e) {
-            return ['status' => 'error', 'message' => 'Error al registrar el usuario: ' . $e->getMessage()];
+            return ['status' => false, 'msg' => 'Error al registrar el usuario: ' . $e->getMessage()];
         }
     }
 
     public function login($email, $password) {
         if (!$email || !$password) {
-            return ['status' => 'error', 'message' => 'Faltan datos'];
+            return ['status' => false, 'msg' => 'Faltan datos'];
         }
     
         $query = "SELECT * FROM users WHERE email = :email";
@@ -49,15 +60,15 @@ class AuthModel {
                 if (isset($user['id']) && isset($user['name']) && isset($user['email'])) {
                     $_SESSION['user_id'] = $user['id']; 
                     $_SESSION['user_name'] = $user['name']; 
-                    return ['status' => 'ok', 'message' => 'Login exitoso'];
+                    return ['status' => true, 'msg' => 'Login exitoso'];
                 } else {
-                    return ['status' => 'error', 'message' => 'Datos de usuario incompletos'];
+                    return ['status' => false, 'msg' => 'Datos de usuario incompletos'];
                 }
             } else {
-                return ['status' => 'error', 'message' => 'Credenciales incorrectas'];
+                return ['status' => false, 'msg' => 'Credenciales incorrectas'];
             }
         } catch (PDOException $e) {
-            return ['status' => 'error', 'message' => 'Error al verificar las credenciales: ' . $e->getMessage()];
+            return ['status' => false, 'msg' => 'Error al verificar las credenciales: ' . $e->getMessage()];
         }
     }
      
@@ -65,7 +76,7 @@ class AuthModel {
     public function logout() {
         session_start();
         session_destroy();
-        return ['status' => 'ok', 'message' => 'Sesión cerrada con éxito'];
+        return ['status' => true, 'msg' => 'Sesión cerrada con éxito'];
     }
 }
 ?>

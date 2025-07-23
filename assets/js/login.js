@@ -1,27 +1,35 @@
-// Iniciar sesión de usuario.
+// Iniciar sesión
 $(document).ready(function() {
     $('#loginForm').on('submit', function(e) {
         e.preventDefault();
+        const formData = $(this).serialize() + '&action=login';
 
         $.ajax({
-            url: '../api/public/login.php',
+            url: '../api/api.php',
             method: 'POST',
-            data: $(this).serialize(),
+            data: formData,
             dataType: 'json',
             success: function(response) {
-                alert(response.message);
-
-                if (response.status === 'ok') {
-                    window.location.href = '?controller=views&action=index';
+                if (response.status) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.msg || 'Inicio de sesión exitoso'
+                    });
+                    setTimeout(function() {
+                        window.location.href = '?controller=views&action=index';
+                    }, 3000);
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: response.msg || 'Ocurrió un error inesperado'
+                    });
                 }
             },
-            error: function(xhr, status, error) {
-                console.error('Error en la solicitud:');
-                console.error(xhr);
-                console.error(status);
-                console.error(error);
-
-                alert('Ocurrió un error al iniciar sesión.');
+            error: function(_xhr) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Error al conectar con el servidor'
+                });
             }
         });
     });
