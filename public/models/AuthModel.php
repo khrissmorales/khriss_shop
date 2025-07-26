@@ -58,8 +58,11 @@ class AuthModel {
             if ($user && password_verify($password, $user['password'])) {
                 // Verificar que los índices existan antes de usarlos
                 if (isset($user['id']) && isset($user['name']) && isset($user['email'])) {
-                    $_SESSION['user_id'] = $user['id']; 
-                    $_SESSION['user_name'] = $user['name']; 
+                   $_SESSION['user'] = [
+                        'id' => $user['id'],
+                        'name' => $user['name'],
+                        'email' => $user['email']
+                    ];
                     return ['status' => true, 'msg' => 'Login exitoso'];
                 } else {
                     return ['status' => false, 'msg' => 'Datos de usuario incompletos'];
@@ -74,7 +77,6 @@ class AuthModel {
      
 
     public function logout() {
-        session_start();
         session_destroy();
         return ['status' => true, 'msg' => 'Sesión cerrada con éxito'];
     }

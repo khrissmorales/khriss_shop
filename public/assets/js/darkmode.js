@@ -9,26 +9,14 @@ const Toast = Swal.mixin({
 
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('darkModeSwitch');
-    const body = document.getElementById('mainBody');
-    const navbar = document.querySelector('.navbar');
 
     function activarModoOscuro() {
-        body.classList.replace('bg-light', 'bg-dark');
-        body.classList.replace('text-dark', 'text-light');
-
-        navbar.classList.replace('navbar-light', 'navbar-dark');
-        navbar.classList.replace('bg-light', 'bg-dark');
-
+        document.documentElement.classList.add('dark-mode');
         localStorage.setItem('darkMode', 'true');
     }
 
     function desactivarModoOscuro() {
-        body.classList.replace('bg-dark', 'bg-light');
-        body.classList.replace('text-light', 'text-dark');
-
-        navbar.classList.replace('navbar-dark', 'navbar-light');
-        navbar.classList.replace('bg-dark', 'bg-light');
-
+        document.documentElement.classList.remove('dark-mode');
         localStorage.setItem('darkMode', 'false');
     }
 
@@ -40,9 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggle.addEventListener('change', () => {
         if (toggle.checked) {
-            activarModoOscuro();
+        activarModoOscuro();
         } else {
-            desactivarModoOscuro();
+        desactivarModoOscuro();
         }
     });
 });
