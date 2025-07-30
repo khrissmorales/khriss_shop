@@ -120,6 +120,13 @@ body {
 .dark-mode .form-label {
     color: #e0e0e0;
 }
+.dark-mode .dropdown-menu,
+.dark-mode .dropdown-item {
+    background-color: #1e1e1e;
+}
+.dark-mode .dropdown-item:hover {
+    background-color: #212529;
+}
 
 .dark-mode input:-webkit-autofill,
 .dark-mode input:-webkit-autofill:hover,

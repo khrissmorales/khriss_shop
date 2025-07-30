@@ -1,6 +1,6 @@
 <div class="row justify-content-center">
-    <div class="col-md-4">
-        <div class="card shadow rounded">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow rounded mb-5" style="margin-top: 85px; margin-bottom: 300px;">
             <div class="card-body">
                 <h4 class="card-title text-center mb-4">Iniciar sesión</h4>
                 <form action="" method="post" id="loginForm">
@@ -13,6 +13,11 @@
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Entrar</button>
+
+                    <!-- Enlace de Olvidé mi contraseña -->
+                    <div class="text-center mt-3">
+                        <a href="?controller=auth&action=forgot" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+                    </div>
                 </form>
             </div>
         </div>

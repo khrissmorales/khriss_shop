@@ -20,6 +20,7 @@
                         <label for="confirmar_password" class="form-label">Repetir contraseña:</label>
                         <input type="password" class="form-control" id="confirmar_password" name="confirmar_password" placeholder="Repite tu contraseña" required>
                     </div>
+
                     <button type="submit" class="btn btn-success w-100">Registrarse</button>
                 </form>
             </div>

@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         title: result.msg || 'Sesión cerrada'
                     });
                     setTimeout(() => {
-                        window.location.href = 'login.php';
-                    }, 2000);
+                        window.location.href = '?controller=views&action=login';
+                    }, 1000);
                 } else {
                     Toast.fire({
                         icon: 'error',

@@ -77,7 +77,7 @@
                                 <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['user']['name']) ?>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="?controller=views&action=profile">Mi perfil</a></li>
+                                <li><a class="dropdown-item text-primary" href="?controller=views&action=profile">Mi perfil</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a id="logoutBtn" class="dropdown-item text-danger" href="#">Cerrar sesión</a></li>
                             </ul>
@@ -107,18 +107,19 @@
     
     <!-- CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/darkmode.js"></script>
-    <script src="assets/js/logout.js"></script>
+    
+    <!-- JS -->
+    <script src="assets/js/base.js"></script>
+    <script src="assets/js/auth/logout.js"></script>
 
     <!-- Scripts cargados dinámicamente de acuerdo a la vista -->
     <?php if (isset($contenido)): ?>
         <?php
             $scripts = [
                 'views/auth/login.html'       => 'assets/js/auth/login.js',
-                'views/auth/register.html'    => 'assets/js/auth/register.js',
-                'views/user/profile.html'     => 'assets/js/user/profile.js',
+                'views/auth/register.php'    => 'assets/js/auth/register.js',
+                'views/users/profile.html'     => 'assets/js/users/profile.js',
                 'views/store/boys.php'        => 'assets/js/store/boys.js',
                 'views/store/womens.php'      => 'assets/js/store/womens.js',
                 'views/store/mens.php'        => 'assets/js/store/mens.js',

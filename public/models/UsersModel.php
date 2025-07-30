@@ -1,14 +1,14 @@
 <?php
 require_once '../config/db.php';
 
-class UserModel {
+class UsersModel {
     private $conn;
 
     public function __construct() {
         $this->conn = getDBConnection();
     }
 
-    public function getUserById($id) { 
+    public function getUserProfile($id) { 
     
     }
 

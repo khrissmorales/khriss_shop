@@ -4,58 +4,47 @@ require_once '../models/AuthModel.php';
 header('Content-Type: application/json');
 
 $auth = new AuthModel();
-$method = $_SERVER['REQUEST_METHOD'];
+
+// Solo aceptar POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['status' => false, 'msg' => 'Método no permitido']);
+    exit;
+}
+
 $action = $_POST['action'] ?? '';
 
 // Lista blanca de acciones válidas
 $accionesPermitidas = ['register', 'login', 'logout'];
 
-if (empty($action) || !in_array($action, $accionesPermitidas)) {
+if (!in_array($action, $accionesPermitidas)) {
     echo json_encode(['status' => false, 'msg' => 'Acción no válida o no especificada']);
     exit;
 }
 
-// Solo iniciamos sesión donde se necesita
-$sesionStart = ['login', 'logout'];
-
-if (in_array($action, $sesionStart)) {
+// Iniciar sesión si es necesario
+$sessionStart = ['login', 'logout'];
+if (in_array($action, $sessionStart)) {
     session_start();
 }
 
-switch ($method) {
-    case 'GET':
-        break;
-        
-    case 'POST':
-        switch ($action){
-            case 'register':
-                $nombre = $_POST['name'] ?? '';
-                $email = $_POST['email'] ?? '';
-                $password = $_POST['password'] ?? '';
-
-                echo json_encode($auth->register($nombre, $email, $password));
-                break;
-
-            case 'login':
-                $email = $_POST['email'] ?? '';
-                $password = $_POST['password'] ?? '';
-
-                echo json_encode($auth->login($email, $password));
-                break;
-
-            case 'logout':
-                echo json_encode($auth->logout());
-                break;
-
-            default:
-                echo json_encode(['status' => false, 'msg' => "Acción no reconocida"]);
-        }
-    case 'DELETE':
+switch ($action) {
+    case 'register':
+        $nombre = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        echo json_encode($auth->register($nombre, $email, $password));
         break;
 
-    case 'PUT':
+    case 'login':
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        echo json_encode($auth->login($email, $password));
+        break;
+
+    case 'logout':
+        echo json_encode($auth->logout());
         break;
 
     default:
-        echo json_encode(['status' => false, 'msg' => 'Petición no reconocida']);
+        echo json_encode(['status' => false, 'msg' => 'Acción POST no reconocida']);
 }

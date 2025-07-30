@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 setTimeout(() => {
                     window.location.href = '?controller=views&action=index';
-                }, 3000);
+                }, 1000);
             } else {
                 Toast.fire({
                     icon: 'error',

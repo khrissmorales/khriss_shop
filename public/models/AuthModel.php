@@ -24,18 +24,28 @@ class AuthModel {
             return ['status' => false, 'msg' => 'El correo ya está registrado'];
         }
 
+        // Verificar si ya existe un admin
+        $adminQuery = "SELECT COUNT(*) FROM users WHERE rol = 1";
+        $adminStmt = $this->conn->prepare($adminQuery);
+        $adminStmt->execute();
+        $existeAdmin = $adminStmt->fetchColumn() > 0;
+
+        // Si no existe un admin, este usuario será admin. Si ya existe, será usuario normal.
+        $rol = $existeAdmin ? 0 : 1;
+
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        $query = "INSERT INTO users (name, email, password) VALUES (:nombre, :email, :password)";
+        $query = "INSERT INTO users (name, email, password, rol) VALUES (:nombre, :email, :password, :rol)";
         $stmt = $this->conn->prepare($query);
 
         $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':rol', $rol);
 
         try {
             $stmt->execute();
-            return ['status' => true, 'msg' => 'Usuario registrado con éxito'];
+            return ['status' => true, 'msg' => 'Usuario registrado con éxito', 'rol' => $rol];
         } catch (PDOException $e) {
             return ['status' => false, 'msg' => 'Error al registrar el usuario: ' . $e->getMessage()];
         }

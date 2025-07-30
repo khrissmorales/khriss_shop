@@ -17,11 +17,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.status) {
-                Toast.fire({
-                    icon: 'success',
-                    title: result.msg || 'Guardado con éxito'
-                });
-                form.reset();
+                if(result.rol == 1){
+                    Toast.fire({
+                        icon: 'success',
+                        title: result.msg + ' **** Usuario administrador creado **** '
+                    });
+                    form.reset();
+                    setTimeout(() => {
+                        window.location.href = '?controller=views&action=login';
+                    }, 1000);
+                } else {
+                    Toast.fire({
+                        icon: 'success',
+                        title: result.msg || 'Usuario registrado con éxito'
+                    });
+                    form.reset();
+                    setTimeout(() => {
+                        window.location.href = '?controller=views&action=login';
+                    }, 1000);
+                }
             } else {
                 Toast.fire({
                     icon: 'error',
