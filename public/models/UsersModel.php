@@ -8,13 +8,95 @@ class UsersModel {
         $this->conn = getDBConnection();
     }
 
-    public function getUserProfile($id) { 
-    
+    public function getUserProfile($id) {
+        try {
+            $sql = "SELECT id, name, email, fecha_registro, rol
+                    FROM users
+                    WHERE id = :id
+                    LIMIT 1";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($usuario) {
+                return [
+                    'status' => true,
+                    'data' => $usuario
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'msg' => 'Usuario no encontrado o inactivo'
+                ];
+            }
+
+        } catch (PDOException $e) {
+            return [
+                'status' => false,
+                'msg' => 'Error al obtener el perfil: ' . $e->getMessage()
+            ];
+        }
     }
 
-    public function updateProfile($id, $name, $email) {
-    
+    public function updateProfile($id, $data) {
+        try {
+            $nombre = trim($data['nombre'] ?? '');
+            $correo = trim($data['correo'] ?? '');
+            $claveActual = $data['clave_actual'] ?? '';
+            $claveNueva  = $data['clave_nueva'] ?? '';
+
+            // Obtener contraseña actual para validar si es necesario
+            $stmt = $this->conn->prepare("SELECT password FROM users WHERE id = :id");
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$usuario) {
+                return ['status' => false, 'msg' => 'Usuario no encontrado'];
+            }
+
+            $claveHash = null;
+            $logoutRequired = false;
+
+            if (!empty($claveNueva)) {
+                if (!password_verify($claveActual, $usuario['password'])) {
+                    return ['status' => false, 'msg' => 'La contraseña actual es incorrecta'];
+                }
+
+                $claveHash = password_hash($claveNueva, PASSWORD_BCRYPT);
+                $logoutRequired = true; // Marcar que debe cerrarse sesión después del update
+            }
+
+            // Preparar la consulta
+            $sql = "UPDATE users SET name = :nombre, email = :correo";
+            if ($claveHash) {
+                $sql .= ", password = :clave";
+            }
+            $sql .= " WHERE id = :id";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':nombre', $nombre);
+            $stmt->bindParam(':correo', $correo);
+            if ($claveHash) {
+                $stmt->bindParam(':clave', $claveHash);
+            }
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+
+            if ($logoutRequired) {
+                session_destroy();
+                return ['status' => true, 'msg' => 'Contraseña actualizada. Por seguridad debes iniciar sesión de nuevo.', 'forceLogout' => true];
+            }
+
+            return ['status' => true, 'msg' => 'Perfil actualizado correctamente'];
+
+        } catch (PDOException $e) {
+            return ['status' => false, 'msg' => 'Error: ' . $e->getMessage()];
+        }
     }
+
 
     public function changePassword($id, $oldPass, $newPass) {
     

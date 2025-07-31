@@ -5,7 +5,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const nombre = document.getElementById('nombre');
     const correo = document.getElementById('correo');
-    const clave = document.getElementById('clave');
+
+    const grupoClaveActual = document.getElementById('grupoClaveActual');
+    const grupoClaveNueva = document.getElementById('grupoClaveNueva');
+    const claveActual = document.getElementById('claveActual');
+    const claveNueva = document.getElementById('claveNueva');
 
     // Cargar datos del perfil
     try {
@@ -13,15 +17,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             method: 'GET'
         });
 
-        const result = await response.json();
-        if (result.status) {
-            nombre.value = result.nombre;
-            correo.value = result.correo;
-            clave.value = ''; // por seguridad
+        const data = await response.json();
+        if (data.status) {
+            nombre.value = data.data.name;
+            correo.value = data.data.email;
         } else {
             Toast.fire({
                 icon: 'error',
-                title: result.msg || 'Error al cargar el perfil'
+                title: data.msg || 'Error al cargar el perfil'
             });
         }
     } catch (error) {
@@ -35,10 +38,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnEditar.addEventListener('click', () => {
         nombre.disabled = false;
         correo.disabled = false;
-        clave.disabled = false;
 
         btnGuardar.classList.remove('d-none');
         btnEditar.classList.add('d-none');
+
+        grupoClaveActual.classList.remove('d-none');
+        grupoClaveNueva.classList.remove('d-none');
     });
 
     // Guardar cambios
@@ -49,7 +54,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         formData.append('action', 'updateProfile');
         formData.append('nombre', nombre.value);
         formData.append('correo', correo.value);
-        formData.append('clave', clave.value);
+
+        formData.append('clave_actual', claveActual.value);
+        formData.append('clave_nueva', claveNueva.value);
+
 
         try {
             const response = await fetch('api/users_api.php', {
@@ -57,24 +65,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                 body: formData
             });
 
-            const result = await response.json();
+            const data = await response.json();
 
-            if (result.status) {
+            if (data.status) {
                 Toast.fire({
                     icon: 'success',
-                    title: result.msg || 'Perfil actualizado correctamente'
+                    title: data.msg || 'Perfil actualizado correctamente'
                 });
+
+                if (data.forceLogout) {
+                    setTimeout(() => {
+                        window.location.href = '?controller=views&action=login';
+                    }, 1000);
+                    return;
+                }
 
                 nombre.disabled = true;
                 correo.disabled = true;
-                clave.disabled = true;
 
                 btnGuardar.classList.add('d-none');
                 btnEditar.classList.remove('d-none');
             } else {
                 Toast.fire({
                     icon: 'error',
-                    title: result.msg || 'No se pudo actualizar el perfil'
+                    title: data.msg || 'No se pudo actualizar el perfil'
                 });
             }
         } catch (error) {

@@ -45,11 +45,13 @@ switch ($method) {
     case 'POST':
         switch ($action) {
             case 'updateProfile':
-                $nombre = $_POST['nombre'] ?? '';
-                $correo = $_POST['correo'] ?? '';
-                $clave = $_POST['clave'] ?? '';
-
-                echo json_encode($users->updateProfile($idUsuario, $nombre, $correo, $clave));
+                $data = [
+                    'nombre'       => $_POST['nombre'] ?? '',
+                    'correo'       => $_POST['correo'] ?? '',
+                    'clave_actual' => $_POST['clave_actual'] ?? '',
+                    'clave_nueva'  => $_POST['clave_nueva'] ?? ''
+                ];
+                echo json_encode($users->updateProfile($idUsuario, $data));
                 break;
 
             default:
