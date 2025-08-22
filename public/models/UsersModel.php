@@ -7,6 +7,21 @@ class UsersModel {
     public function __construct() {
         $this->conn = getDBConnection();
     }
+    private function validarDatosPerfil($nombre, $correo, $claveNueva = ''){
+        $errores = [];
+
+        if ($nombre === '') {
+            $errores[] = 'El nombre no puede estar vacío o solo contener espacios.';
+        }
+
+        if ($correo === '') {
+            $errores[] = 'El correo no puede estar vacío o solo contener espacios.';
+        }
+        if ($claveNueva === '') {
+            $errores[] = 'La nueva contraseña no puede ser solo espacios en blanco.';
+        }
+        return $errores;
+    }
 
     public function getUserProfile($id) {
         try {
@@ -45,7 +60,12 @@ class UsersModel {
             $nombre = trim($data['nombre'] ?? '');
             $correo = trim($data['correo'] ?? '');
             $claveActual = $data['clave_actual'] ?? '';
-            $claveNueva  = $data['clave_nueva'] ?? '';
+            $claveNueva  = trim($data['clave_nueva'] ?? '');
+
+            $errores = $this->validarDatosPerfil($nombre, $correo, $claveNueva);
+            if (!empty($errores)) {
+                return ['status' => false, 'msg' => implode(' ', $errores)];
+            }
 
             // Obtener contraseña actual para validar si es necesario
             $stmt = $this->conn->prepare("SELECT password FROM users WHERE id = :id");
@@ -89,8 +109,15 @@ class UsersModel {
                 session_destroy();
                 return ['status' => true, 'msg' => 'Contraseña actualizada. Por seguridad debes iniciar sesión de nuevo.', 'forceLogout' => true];
             }
-
-            return ['status' => true, 'msg' => 'Perfil actualizado correctamente'];
+            // Actualizar variable de sesión
+            $_SESSION['user']['name'] = $nombre;
+            return [
+                'status' => true,
+                'msg' => 'Perfil actualizado correctamente',
+                'data' => [
+                    'name' => $nombre
+                ]
+            ];
 
         } catch (PDOException $e) {
             return ['status' => false, 'msg' => 'Error: ' . $e->getMessage()];

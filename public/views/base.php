@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="assets/img/icon.svg">
-
     <script>
-        const darkMode = localStorage.getItem('darkMode');
-        if (darkMode === 'true') {
+        (function() {
+            const usarModoOscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (usarModoOscuro) {
             document.documentElement.classList.add('dark-mode');
-        }
+            }
+        })();
     </script>
 
+    <link rel="icon" type="image/svg+xml" href="assets/img/icon.svg">
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -54,12 +55,10 @@
                         <a class="nav-link <?= ($_GET['action'] === 'accesorios') ? 'current-category' : '' ?>" href="?controller=views&action=accesorios">Accesorios</a>
                     </li>
                 </ul>
-
-                <form class="d-flex me-3" role="search">
-                    <input class="form-control input-search me-2" type="search" placeholder="Buscar productos" aria-label="Buscar">
-                    <button class="btn btn-outline-dark search-button" type="submit">Buscar</button>
-                </form>
-
+                <div class="d-flex align-items-center">
+                <label for="buscar_producto" class="me-2">Buscar:</label>
+                <input class="form-control input-search" id="buscar_producto" type="search" placeholder="Buscar productos" aria-label="Buscar">
+                </div>
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item me-2">
                         <a class="nav-link position-relative" href="#">
@@ -74,7 +73,8 @@
                     <?php if (isset($_SESSION['user'])): ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-success" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['user']['name']) ?>
+                                <i class="bi bi-person-circle"></i> 
+                                <span id="nombreUsuarioNav"><?= htmlspecialchars($_SESSION['user']['name']) ?></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item text-primary" href="?controller=views&action=profile">Mi perfil</a></li>
@@ -93,13 +93,8 @@
                 </ul>
 
             </div>
-            <div class="form-check form-switch ms-3">
-                <input class="form-check-input" type="checkbox" id="darkModeSwitch">
-                <label class="form-check-label" for="darkModeSwitch">🌙</label>
-            </div>
         </div>
-    </nav>
-    
+    </nav>    
     <!-- Contenido dinámico -->
     <div class="container mt-4">
         <?php require_once($contenido); ?>
@@ -173,7 +168,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="text-center mt-4">
                 <small class="text-muted">&copy; <?= date('Y') ?> LKZ STORE. Todos los derechos reservados.</small>
             </div>

@@ -4,33 +4,28 @@ const Toast = Swal.mixin({
     position: 'top-end',
     showConfirmButton: false,
     timer: 3000,
-    timerProgressBar: true
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('darkModeSwitch');
-
-    function activarModoOscuro() {
+    // Aplica automáticamente el modo oscuro si el sistema lo usa
+    const usarModoOscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (usarModoOscuro) {
         document.documentElement.classList.add('dark-mode');
-        localStorage.setItem('darkMode', 'true');
-    }
-
-    function desactivarModoOscuro() {
+    } else {
         document.documentElement.classList.remove('dark-mode');
-        localStorage.setItem('darkMode', 'false');
     }
 
-    // Aplicar configuración guardada
-    if (localStorage.getItem('darkMode') === 'true') {
-        activarModoOscuro();
-        toggle.checked = true;
-    }
-
-    toggle.addEventListener('change', () => {
-        if (toggle.checked) {
-        activarModoOscuro();
+    // Opcional: Escuchar si el usuario cambia el tema del sistema en tiempo real
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (e.matches) {
+            document.documentElement.classList.add('dark-mode');
         } else {
-        desactivarModoOscuro();
+            document.documentElement.classList.remove('dark-mode');
         }
     });
 });

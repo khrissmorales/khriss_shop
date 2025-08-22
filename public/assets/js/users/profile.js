@@ -58,13 +58,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         formData.append('clave_actual', claveActual.value);
         formData.append('clave_nueva', claveNueva.value);
 
-
         try {
             const response = await fetch('api/users_api.php', {
                 method: 'POST',
                 body: formData
             });
-
             const data = await response.json();
 
             if (data.status) {
@@ -72,14 +70,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     icon: 'success',
                     title: data.msg || 'Perfil actualizado correctamente'
                 });
-
+                if (data.data && data.data.name) {
+                    const spanNombreNav = document.getElementById('nombreUsuarioNav');
+                    if (spanNombreNav) {
+                        spanNombreNav.textContent = data.data.name;
+                    }
+                }
                 if (data.forceLogout) {
                     setTimeout(() => {
                         window.location.href = '?controller=views&action=login';
                     }, 1000);
                     return;
                 }
-
                 nombre.disabled = true;
                 correo.disabled = true;
 
