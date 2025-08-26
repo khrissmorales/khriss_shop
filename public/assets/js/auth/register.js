@@ -18,23 +18,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (result.status) {
                 if(result.rol == 1){
+                    form.reset();
                     Toast.fire({
                         icon: 'success',
-                        title: result.msg + ' **** Usuario administrador creado **** '
+                        title: result.msg + ' **** Usuario administrador creado **** ',
+                        didClose: () => {
+                            window.location.href = '?controller=views&action=login';
+                        }
                     });
-                    form.reset();
-                    setTimeout(() => {
-                        window.location.href = '?controller=views&action=login';
-                    }, 1000);
                 } else {
+                    form.reset();
                     Toast.fire({
                         icon: 'success',
-                        title: result.msg || 'Usuario registrado con éxito'
+                        title: result.msg || 'Usuario registrado con éxito',
+                        didClose: () => {
+                            window.location.href = '?controller=views&action=login'
+                        }
                     });
-                    form.reset();
-                    setTimeout(() => {
-                        window.location.href = '?controller=views&action=login';
-                    }, 1000);
                 }
             } else {
                 Toast.fire({

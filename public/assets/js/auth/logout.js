@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.status) {
                     Toast.fire({
                         icon: 'success',
-                        title: result.msg || 'Sesión cerrada'
+                        title: result.msg || 'Sesión cerrada',
+                        didClose: () => {
+                            window.location.href = '?controller=views&action=login';
+                        }
                     });
-                    setTimeout(() => {
-                        window.location.href = '?controller=views&action=login';
-                    }, 1000);
                 } else {
                     Toast.fire({
                         icon: 'error',

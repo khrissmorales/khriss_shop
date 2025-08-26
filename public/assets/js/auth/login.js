@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.status) {
                 Toast.fire({
                     icon: 'success',
-                    title: result.msg || 'Inicio de sesión exitoso'
+                    title: result.msg || 'Inicio de sesión exitoso',
+                    didClose: () => {
+                        window.location.href = '?controller=views&action=index';
+                    }
                 });
-                setTimeout(() => {
-                    window.location.href = '?controller=views&action=index';
-                }, 1000);
             } else {
                 Toast.fire({
                     icon: 'error',

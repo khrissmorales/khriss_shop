@@ -4,7 +4,7 @@ require_once '../config/db.php';
 class UsersModel {
     private $conn;
 
-    public function __construct() {
+    public function __construct(){
         $this->conn = getDBConnection();
     }
     private function validarDatosPerfil($nombre, $correo, $claveNueva = ''){
@@ -22,8 +22,7 @@ class UsersModel {
         }
         return $errores;
     }
-
-    public function getUserProfile($id) {
+    public function getUserProfile($id){
         try {
             $sql = "SELECT id, name, email, fecha_registro, rol
                     FROM users
@@ -54,8 +53,7 @@ class UsersModel {
             ];
         }
     }
-
-    public function updateProfile($id, $data) {
+    public function updateProfile($id, $data){
         try {
             $nombre = trim($data['nombre'] ?? '');
             $correo = trim($data['correo'] ?? '');
@@ -123,17 +121,10 @@ class UsersModel {
             return ['status' => false, 'msg' => 'Error: ' . $e->getMessage()];
         }
     }
-
-
-    public function changePassword($id, $oldPass, $newPass) {
-    
+    public function changePassword($id, $oldPass, $newPass){
     }
-
-    public function emailExists($email) {
-    
+    public function emailExists($email){
     }
-
-    public function listUsers() {
-    
+    public function listUsers(){
     }
 }
